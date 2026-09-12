@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Groupe Touristique Tlemcen — Accès sécurisé</title>
+<style>
+:root{
+  --bg:#f1f5fb; --card:#ffffff; --text:#0f172a; --muted:#64748b; --line:#e2e8f0;
+  --accent:#0d6efd; --good:#16a34a; --bad:#dc2626; --warn:#d97706;
+  --shadow:0 2px 12px rgba(15,23,42,.07);
+}
+[data-theme="dark"]{
+  --bg:#0b1220; --card:#111a2e; --text:#e6edf7; --muted:#8fa3bf; --line:#1e2b45;
+  --shadow:0 2px 12px rgba(0,0,0,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:14px;transition:.2s;min-height:100vh}
+.app{max-width:1300px;margin:0 auto;padding:16px}
+
+/* ---------- ÉCRAN DE CONNEXION ---------- */
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#0d6efd 0%,#0ea5e9 50%,#0b1220 100%);
+  z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
+.login-box{background:var(--card);border-radius:20px;padding:38px 34px;width:100%;max-width:430px;
+  box-shadow:0 30px 80px rgba(0,0,0,.4);animation:pop .3s ease}
+@keyframes pop{from{transform:translateY(20px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+.login-logo{width:70px;height:70px;border-radius:18px;background:linear-gradient(135deg,#0d6efd,#0ea5e9);
+  display:grid;place-items:center;font-weight:900;font-size:22px;color:#fff;margin:0 auto 18px;box-shadow:0 10px 25px rgba(13,110,253,.4)}
+.login-box h2{text-align:center;font-size:20px;font-weight:800;margin-bottom:6px;letter-spacing:-.3px}
+.login-box .subtitle{text-align:center;font-size:13px;color:var(--muted);margin-bottom:26px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.form-group input,.form-group select{width:100%;padding:13px 15px;border:1px solid var(--line);border-radius:11px;
+  background:var(--bg);color:var(--text);font-size:14px;font-weight:600;outline:none;font-family:inherit;transition:.15s}
+.form-group input:focus,.form-group select:focus{border-color:var(--accent);background:var(--card);box-shadow:0 0 0 3px rgba(13,110,253,.15)}
+.login-btn{width:100%;padding:14px;border-radius:11px;border:none;background:linear-gradient(135deg,#0d6efd,#0ea5e9);
+  color:#fff;font-weight:800;font-size:15px;cursor:pointer;transition:.15s;box-shadow:0 6px 18px rgba(13,110,253,.35);margin-top:6px}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 10px 25px rgba(13,110,253,.5)}
+.login-err{background:rgba(220,38,38,.1);color:var(--bad);padding:10px 14px;border-radius:9px;
+  font-size:13px;font-weight:700;margin-bottom:14px;text-align:center;display:none}
+.login-info{background:rgba(13,110,253,.07);border-left:3px solid var(--accent);padding:10px 14px;border-radius:8px;
+  font-size:11.5px;color:var(--muted);margin-top:18px;line-height:1.6}
+.login-info code{background:var(--bg);padding:2px 7px;border-radius:5px;font-weight:800;color:var(--accent);font-family:monospace}
+
+/* ---------- TOPBAR ---------- */
+.topbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;
+  background:linear-gradient(120deg,#0d6efd,#0ea5e9);color:#fff;padding:14px 20px;border-radius:14px;box-shadow:var(--shadow);margin-bottom:20px}
+.brand{display:flex;gap:12px;align-items:center}
+.logo{width:48px;height:48px;border-radius:13px;background:rgba(255,255,255,.22);display:grid;place-items:center;font-weight:800;font-size:18px}
+.brand h1{font-size:18px;font-weight:800;letter-spacing:-.3px}
+.brand p{font-size:12px;opacity:.88;margin-top:2px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ctrl-btn{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff;
+  padding:9px 14px;border-radius:9px;cursor:pointer;font-weight:700;font-size:13px;transition:.15s;white-space:nowrap}
+.ctrl-btn:hover{background:rgba(255,255,255,.32)}
+.ctrl-btn.icon{width:40px;padding:0;height:40px;display:grid;place-items:center;font-size:16px}
+.user-badge{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.18);
+  padding:7px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.35)}
+.user-badge .avatar{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.3);
+  display:grid;place-items:center;font-weight:900;font-size:12px}
+.user-badge .info{display:flex;flex-direction:column;line-height:1.15}
+.user-badge .u-name{font-size:12px;font-weight:800}
+.user-badge .u-role{font-size:10px;opacity:.85;text-transform:uppercase;letter-spacing:.4px}
+
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:16px}
+.page-head h2{font-size:20px;font-weight:800;letter-spacing:-.3px}
+.page-head p{font-size:13px;color:var(--muted);margin-top:3px}
+
+/* ---------- GRILLE ---------- */
+.unit-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.unit-card{background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:22px 18px;cursor:pointer;transition:.2s;position:relative;overflow:hidden;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;min-height:150px;justify-content:space-between}
+.unit-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--uc,#0d6efd)}
+.unit-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 14px 30px rgba(13,110,253,.2)}
+.unit-card.consolidated{background:linear-gradient(135deg,#0d6efd,#0ea5e9);color:#fff;border-color:transparent}
+.unit-card.consolidated::before{background:rgba(255,255,255,.45)}
+.unit-card.consolidated .name{color:#fff}
+.unit-card.consolidated .type{color:rgba(255,255,255,.85)}
+.unit-card.consolidated .footer{border-top-color:rgba(255,255,255,.3)}
+.unit-card.consolidated .footer span{color:#fff!important}
+.unit-card.consolidated .open{color:#fff!important}
+.unit-card.consolidated .sigle{background:rgba(255,255,255,.25)!important}
+.unit-card .sigle{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;font-weight:900;font-size:12px;color:#fff;background:var(--uc);letter-spacing:.5px}
+.unit-card .name{font-weight:800;font-size:15px;line-height:1.3;padding-right:44px;color:var(--text);letter-spacing:-.2px}
+.unit-card .type{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;font-weight:700;margin-top:6px}
+.unit-card .footer{display:flex;justify-content:space-between;align-items:center;margin-top:14px;
+  padding-top:12px;border-top:1px dashed var(--line);font-size:12px;font-weight:700}
+.unit-card .open{color:var(--accent);display:flex;align-items:center;gap:5px}
+.unit-card .lock-ico{color:var(--bad);font-size:13px}
+.unit-card .unlock-ico{color:var(--good);font-size:13px}
+
+/* ---------- MODALES ---------- */
+.modal-overlay{position:fixed;inset:0;background:rgba(8,15,30,.65);backdrop-filter:blur(4px);z-index:900;
+  display:flex;align-items:flex-start;justify-content:center;padding:20px 12px;overflow-y:auto;animation:fd .16s ease}
+@keyframes fd{from{opacity:0}to{opacity:1}}
+.modal{background:var(--card);border-radius:16px;width:100%;max-width:900px;
+  box-shadow:0 26px 70px rgba(0,0,0,.45);animation:pop .22s ease;overflow:hidden;margin:auto;border:1px solid var(--line)}
+.modal.wide{max-width:1100px}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;
+  background:linear-gradient(120deg,var(--uc,#0d6efd),var(--accent));color:#fff;flex-wrap:wrap}
+.modal-head .mh-title{display:flex;align-items:center;gap:12px}
+.modal-head .mh-dot{width:46px;height:46px;border-radius:12px;background:rgba(255,255,255,.22);
+  display:grid;place-items:center;font-weight:900;font-size:14px;flex-shrink:0;letter-spacing:.5px}
+.modal-head h2{font-size:17px;font-weight:800;line-height:1.2}
+.modal-head p{font-size:11.5px;opacity:.9;margin-top:3px}
+.mh-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.mh-close{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.35);color:#fff;cursor:pointer;font-size:20px;line-height:1}
+.mh-close:hover{background:rgba(255,255,255,.35)}
+.modal-body{padding:18px;max-height:calc(100vh - 180px);overflow-y:auto}
+.modal-foot{padding:12px 20px;border-top:1px solid var(--line);display:flex;gap:10px;
+  justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--card)}
+
+/* ---------- SECTIONS ---------- */
+.sec{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;margin-bottom:12px}
+.sec h3{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);
+  margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+.sec h3 .n{background:rgba(13,110,253,.13);color:var(--accent);font-size:10px;padding:2px 8px;border-radius:20px}
+.grid-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11.5px;color:var(--muted);font-weight:700;display:flex;align-items:center;gap:6px}
+.field label .code{background:var(--bg);color:var(--muted);font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:.3px}
+.field input{background:var(--bg);border:1px solid var(--line);color:var(--text);
+  padding:9px 11px;border-radius:9px;font-size:13px;font-weight:600;outline:none;font-family:inherit;transition:.15s;width:100%}
+.field input:focus{border-color:var(--accent);background:var(--card);box-shadow:0 0 0 3px rgba(13,110,253,.15)}
+.field.calc input{background:rgba(13,110,253,.07);color:var(--accent);font-weight:800;cursor:not-allowed}
+.field input[type=number]::-webkit-outer-spin-button,
+.field input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.field input[type=number]{-moz-appearance:textfield}
+
+/* ---------- BOUTONS ---------- */
+.btn{padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);
+  cursor:pointer;font-weight:700;font-size:13px;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#0b5ed7;color:#fff}
+.btn.good{background:var(--good);border-color:var(--good);color:#fff}
+.btn.good:hover{background:#128a3d;color:#fff}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.danger:hover{background:var(--bad);color:#fff}
+.btn.sm{padding:6px 12px;font-size:12px}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- TABLE ---------- */
+table.data{width:100%;border-collapse:collapse;font-size:13px}
+table.data th,table.data td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+table.data th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);font-weight:700}
+table.data td.n,table.data th.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+table.data tbody tr:hover{background:rgba(13,110,253,.05)}
+table.data tfoot td{font-weight:800;border-top:2px solid var(--accent);background:rgba(13,110,253,.06)}
+table.data tr.sec-row td{background:linear-gradient(90deg,rgba(13,110,253,.14),rgba(13,110,253,.02));
+  font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);border-bottom:1px solid var(--line)}
+table.data tr.calc td{background:rgba(13,110,253,.035)}
+table.data tr.key td{background:rgba(14,165,233,.1);font-weight:800;border-top:1px solid rgba(13,110,253,.25)}
+table.data .code{display:inline-block;min-width:34px;font-size:10px;color:var(--muted);background:var(--bg);
+  padding:2px 6px;border-radius:5px;font-weight:700;margin-right:6px}
+table.data .u{font-style:normal;font-size:10px;color:var(--muted);font-weight:700;margin-left:4px}
+
+.kpis-mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:16px}
+.kpi-mini{background:var(--bg);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+.kpi-mini .l{font-size:10px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.kpi-mini .v{font-size:17px;font-weight:800;margin-top:5px;font-variant-numeric:tabular-nums}
+
+.info-banner{background:rgba(13,110,253,.07);border-left:4px solid var(--accent);border-radius:10px;
+  padding:11px 15px;font-size:13px;line-height:1.6;margin-bottom:14px}
+.warn-banner{background:rgba(217,119,6,.09);border-left:4px solid var(--warn);border-radius:10px;
+  padding:11px 15px;font-size:13px;line-height:1.6;margin-bottom:14px}
+.good-banner{background:rgba(22,163,74,.08);border-left:4px solid var(--good);border-radius:10px;
+  padding:11px 15px;font-size:13px;line-height:1.6;margin-bottom:14px}
+.pwd-chip{display:inline-block;background:var(--bg);border:1px solid var(--line);border-radius:6px;
+  padding:2px 8px;font-family:monospace;font-size:12px;font-weight:800;color:var(--accent);letter-spacing:.5px;margin:2px}
+.role-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.5px}
+.role-admin{background:rgba(139,92,246,.15);color:#8b5cf6}
+.role-unit{background:rgba(13,110,253,.15);color:var(--accent)}
+.role-inactive{background:rgba(100,116,139,.15);color:var(--muted)}
+
+/* ---------- TOAST ---------- */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:#0f172a;color:#fff;padding:12px 22px;border-radius:11px;font-size:13px;font-weight:700;
+  z-index:9999;transition:.3s;box-shadow:0 10px 30px rgba(0,0,0,.35);pointer-events:none;max-width:90vw;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0)}
+[data-theme="dark"] #toast{background:#e6edf7;color:#0f172a}
+
+@media(max-width:640px){
+  .app{padding:12px}
+  .brand h1{font-size:15px}
+  .brand p{display:none}
+  .unit-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+  .unit-card{padding:16px 14px;min-height:130px}
+  .unit-card .name{font-size:13.5px;padding-right:38px}
+  .grid-fields{grid-template-columns:1fr}
+  .modal-body{padding:12px;max-height:calc(100vh - 160px)}
+  .login-box{padding:28px 22px}
+  .user-badge .info{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== ÉCRAN DE CONNEXION ==================== -->
+<div id="loginScreen" class="login-screen">
+  <div class="login-box">
+    <div class="login-logo">GT</div>
+    <h2>Groupe Touristique Tlemcen</h2>
+    <div class="subtitle">Portail sécurisé · Veuillez vous identifier</div>
+
+    <div class="login-err" id="loginErr">Identifiants incorrects</div>
+
+    <div class="form-group">
+      <label>Identifiant</label>
+      <input type="text" id="loginUser" placeholder="ex. hb, admin…" autocomplete="username" autofocus>
+    </div>
+    <div class="form-group">
+      <label>Mot de passe</label>
+      <input type="password" id="loginPwd" placeholder="••••••" autocomplete="current-password">
+    </div>
+    <div class="form-group">
+      <label>Se connecter en tant que</label>
+      <select id="loginRole">
+        <option value="auto">🔎 Détection automatique</option>
+        <option value="admin">👑 Administrateur</option>
+        <option value="unit">🏨 Responsable d'unité</option>
+      </select>
+    </div>
+
+    <button class="login-btn" id="loginBtn">Se connecter →</button>
+
+    <div class="login-info">
+      <b>🔑 Comptes par défaut :</b><br>
+      • <b>Administrateur</b> : <code>admin</code> / <code>admin</code><br>
+      • <b>Responsables</b> : <code>hb</code> / <code>hb123</code>, <code>bg</code>/<code>bg123</code>, <code>bh</code>/<code>bh123</code>, <code>hr</code>/<code>hr123</code>,<br>
+      &nbsp;&nbsp;<code>lz</code>/<code>lz123</code>, <code>ef</code>/<code>ef123</code>, <code>tf</code>/<code>tf123</code>, <code>dg</code>/<code>dg123</code>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== APPLICATION ==================== -->
+<div class="app" id="appRoot" style="display:none">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">GT</div>
+      <div>
+        <h1>Groupe Touristique Tlemcen</h1>
+        <p>Fiches des unités — saisie des indicateurs</p>
+      </div>
+    </div>
+    <div class="controls">
+      <input type="month" id="periodSel" style="background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);padding:9px 12px;border-radius:9px;font-size:13px;outline:none;color-scheme:dark">
+      <div class="user-badge" id="userBadge">
+        <div class="avatar" id="userAvatar">?</div>
+        <div class="info">
+          <div class="u-name" id="userName">—</div>
+          <div class="u-role" id="userRole">—</div>
+        </div>
+      </div>
+      <button class="ctrl-btn" id="logoutBtn" title="Se déconnecter">🚪 Déconnexion</button>
+      <button class="ctrl-btn icon" id="themeBtn" title="Thème">🌙</button>
+    </div>
+  </header>
+
+  <div class="page-head">
+    <div>
+      <h2 id="pageTitle">Choisissez une unité</h2>
+      <p id="periodLabel">Cliquez sur une fiche pour saisir ses indicateurs</p>
+    </div>
+    <div class="btn-row" id="topActions"></div>
+  </div>
+
+  <div class="unit-grid" id="unitGrid"></div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toast"></div>
+
+<script>
+/* ==========================================================================
+   0. HASH
+   ========================================================================== */
+function hashPwd(s){
+  if(!s) return '';
+  let h = 5381;
+  for (let i = 0; i < s.length; i++) h = (((h << 5) + h) ^ s.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+
+/* ==========================================================================
+   1. UNITÉS PAR DÉFAUT
+   ========================================================================== */
+const DEFAULT_UNITS = [
+  {id:'HB', nom:'Station thermale Hammam Bouhanifia', sigle:'HB', type:'Station thermale', couleur:'#0ea5e9'},
+  {id:'BG', nom:'Station thermale Boughrara',         sigle:'BG', type:'Station thermale', couleur:'#14b8a6'},
+  {id:'BH', nom:'Station thermale Bouhdjar',          sigle:'BH', type:'Station thermale', couleur:'#22c55e'},
+  {id:'HR', nom:'Hammam Rabbi',                       sigle:'HR', type:'Station thermale', couleur:'#84cc16'},
+  {id:'LZ', nom:'Hôtel Les Zianides',                 sigle:'LZ', type:'Hôtel',            couleur:'#f59e0b'},
+  {id:'EF', nom:'Hôtel El Forssane',                  sigle:'EF', type:'Hôtel',            couleur:'#f97316'},
+  {id:'TF', nom:'Hôtel Tafna',                        sigle:'TF', type:'Hôtel',            couleur:'#ef4444'},
+  {id:'DG', nom:'Direction Générale (Siège)',         sigle:'DG', type:'Siège',            couleur:'#8b5cf6'}
+];
+
+/* ==========================================================================
+   2. UTILISATEURS PAR DÉFAUT
+   Rôles : 'admin' (accès total) · 'unit' (accès à une seule unité)
+   ========================================================================== */
+const DEFAULT_USERS = [
+  {id:'u-admin', login:'admin', passwordHash: hashPwd('admin'), nom:'Administrateur Général', role:'admin', unitId:null, actif:true},
+  {id:'u-hb',    login:'hb',    passwordHash: hashPwd('hb123'), nom:'Responsable Hammam Bouhanifia', role:'unit', unitId:'HB', actif:true},
+  {id:'u-bg',    login:'bg',    passwordHash: hashPwd('bg123'), nom:'Responsable Boughrara',         role:'unit', unitId:'BG', actif:true},
+  {id:'u-bh',    login:'bh',    passwordHash: hashPwd('bh123'), nom:'Responsable Bouhdjar',          role:'unit', unitId:'BH', actif:true},
+  {id:'u-hr',    login:'hr',    passwordHash: hashPwd('hr123'), nom:'Responsable Hammam Rabbi',      role:'unit', unitId:'HR', actif:true},
+  {id:'u-lz',    login:'lz',    passwordHash: hashPwd('lz123'), nom:'Responsable Les Zianides',      role:'unit', unitId:'LZ', actif:true},
+  {id:'u-ef',    login:'ef',    passwordHash: hashPwd('ef123'), nom:'Responsable El Forssane',       role:'unit', unitId:'EF', actif:true},
+  {id:'u-tf',    login:'tf',    passwordHash: hashPwd('tf123'), nom:'Responsable Tafna',             role:'unit', unitId:'TF', actif:true},
+  {id:'u-dg',    login:'dg',    passwordHash: hashPwd('dg123'), nom:'Responsable Direction Générale',role:'unit', unitId:'DG', actif:true}
+];
+
+let UNITS = [...DEFAULT_UNITS];
+let USERS = [...DEFAULT_USERS];
+
+/* ==========================================================================
+   3. SECTIONS & INDICATEURS
+   ========================================================================== */
+const SECTIONS = [
+  {id:'CR',  nom:'Compte de résultat'},
+  {id:'EFF', nom:'Effectifs'},
+  {id:'TRE', nom:'Trésorerie'},
+  {id:'CRE', nom:'Créances clients'},
+  {id:'DET', nom:"Dettes d'exploitation"},
+  {id:'STK', nom:'Stocks'},
+  {id:'CAP', nom:'Capacité hôtelière'},
+  {id:'CAD', nom:"Chiffre d'affaires par département"},
+  {id:'CON', nom:'Consommations par département'},
+  {id:'CHP', nom:'Charges du personnel par département'},
+  {id:'DIV', nom:'Divers'}
+];
+
+const IND = [
+{c:'01', l:'Ventes de marchandises',                        u:'DZD', s:'CR', t:'in'},
+{c:'02', l:'Ventes de produits finis et intermédiaires',    u:'DZD', s:'CR', t:'in'},
+{c:'03', l:'Vente de travaux',                              u:'DZD', s:'CR', t:'in'},
+{c:'124',l:'Prestation de services vendues',                u:'DZD', s:'CR', t:'in'},
+{c:'04', l:"Vente d'études",                                u:'DZD', s:'CR', t:'in'},
+{c:'05', l:'Autres (703, 706, 708 et 709)',                 u:'DZD', s:'CR', t:'in'},
+{c:'06', l:"Chiffre d'affaires",                            u:'DZD', s:'CR', t:'calc', key:1},
+{c:'07', l:'Production stockée ou déstockée',               u:'DZD', s:'CR', t:'in'},
+{c:'08', l:'Production immobilisée',                        u:'DZD', s:'CR', t:'in'},
+{c:'09', l:"Subvention d'exploitation",                     u:'DZD', s:'CR', t:'in'},
+{c:'10', l:'Production de la période',                      u:'DZD', s:'CR', t:'calc'},
+{c:'11', l:'Achats de marchandises vendues',                u:'DZD', s:'CR', t:'in'},
+{c:'12', l:'Matières premières',                            u:'DZD', s:'CR', t:'in'},
+{c:'128',l:'Autres consommations (602-607)',                u:'DZD', s:'CR', t:'in'},
+{c:'13', l:'Achats consommés',                              u:'DZD', s:'CR', t:'calc'},
+{c:'14', l:"Achats d'études et prestations de service",     u:'DZD', s:'CR', t:'in'},
+{c:'15', l:'Services extérieurs',                           u:'DZD', s:'CR', t:'in'},
+{c:'16', l:'Autres services extérieurs',                    u:'DZD', s:'CR', t:'in'},
+{c:'17', l:'Consommations de la période',                   u:'DZD', s:'CR', t:'calc'},
+{c:'18', l:'Valeur ajoutée',                                u:'DZD', s:'CR', t:'calc', key:1},
+{c:'19', l:'Charges du personnel',                          u:'DZD', s:'CR', t:'in'},
+{c:'20', l:'Impôts, taxes et versements assimilés',         u:'DZD', s:'CR', t:'in'},
+{c:'21', l:"E.B.E (Excédent Brut d'Exploitation)",          u:'DZD', s:'CR', t:'calc', key:1},
+{c:'22', l:'Autres produits opérationnels',                 u:'DZD', s:'CR', t:'in'},
+{c:'23', l:'Autres charges opérationnelles',                u:'DZD', s:'CR', t:'in'},
+{c:'24', l:'Dotations aux amortissements et provisions',    u:'DZD', s:'CR', t:'in'},
+{c:'25', l:'Reprise sur perte de valeur et provisions',     u:'DZD', s:'CR', t:'in'},
+{c:'26', l:'Résultat opérationnel',                         u:'DZD', s:'CR', t:'calc'},
+{c:'27', l:'Produits financiers',                           u:'DZD', s:'CR', t:'in'},
+{c:'28', l:'Charges financières',                           u:'DZD', s:'CR', t:'in'},
+{c:'29', l:'Résultat financier',                            u:'DZD', s:'CR', t:'calc'},
+{c:'30', l:'Résultat ordinaire avant impôts',               u:'DZD', s:'CR', t:'calc', key:1},
+{c:'31', l:'CDD',                                u:'Nombre', s:'EFF', t:'in'},
+{c:'32', l:'CDI',                                u:'Nombre', s:'EFF', t:'in'},
+{c:'33', l:'Saisonniers',                        u:'Nombre', s:'EFF', t:'in'},
+{c:'34', l:'Effectif département technique',     u:'Nombre', s:'EFF', t:'in'},
+{c:'35', l:'Effectif département sécurité',      u:'Nombre', s:'EFF', t:'in'},
+{c:'36', l:'Effectif département hébergement',   u:'Nombre', s:'EFF', t:'in'},
+{c:'37', l:'Effectif département restauration',  u:'Nombre', s:'EFF', t:'in'},
+{c:'38', l:'Effectif département administration',u:'Nombre', s:'EFF', t:'in'},
+{c:'39', l:'Effectif département bains et soins',u:'Nombre', s:'EFF', t:'in'},
+{c:'40', l:'Effectif total',                     u:'Nombre', s:'EFF', t:'calc', key:1},
+{c:'43', l:'Concours bancaires courants', u:'DZD', s:'TRE', t:'in'},
+{c:'44', l:'Placements bancaires',        u:'DZD', s:'TRE', t:'in'},
+{c:'45', l:'Dépôt à terme (DAT)',         u:'DZD', s:'TRE', t:'in'},
+{c:'46', l:'Trésorerie',                  u:'DZD', s:'TRE', t:'calc'},
+{c:'42', l:'Trésorerie nette',            u:'DZD', s:'TRE', t:'calc', key:1},
+{c:'47', l:'Intérêts courus',             u:'DZD', s:'TRE', t:'in'},
+{c:'41', l:'Trésorerie globale',          u:'DZD', s:'TRE', t:'calc'},
+{c:'49', l:"Sur l'état et collectivités locales",              u:'DZD', s:'CRE', t:'in'},
+{c:'50', l:'Sur les entreprises publiques et organismes publics',u:'DZD', s:'CRE', t:'in'},
+{c:'51', l:'Sur le privé',                                     u:'DZD', s:'CRE', t:'in'},
+{c:'52', l:'Créances intra-groupe',                            u:'DZD', s:'CRE', t:'in'},
+{c:'48', l:'Créances clients (brut)',                          u:'DZD', s:'CRE', t:'calc', key:1},
+{c:'53', l:'Créances intra-unités',                            u:'DZD', s:'CRE', t:'in'},
+{c:'54', l:'Perte de valeur créance état',                     u:'DZD', s:'CRE', t:'in'},
+{c:'55', l:'Perte de valeur créance EP/OP',                    u:'DZD', s:'CRE', t:'in'},
+{c:'56', l:'Perte de valeur créance privé',                    u:'DZD', s:'CRE', t:'in'},
+{c:'58', l:'Fournisseurs de stocks et services', u:'DZD', s:'DET', t:'in'},
+{c:'59', l:"Fournisseurs d'immobilisation",      u:'DZD', s:'DET', t:'in'},
+{c:'60', l:'Dettes fiscales et parafiscales',    u:'DZD', s:'DET', t:'in'},
+{c:'61', l:'Autres dettes',                      u:'DZD', s:'DET', t:'in'},
+{c:'62', l:'Dettes intra-groupe',                u:'DZD', s:'DET', t:'in'},
+{c:'63', l:'Dettes intra-unités',                u:'DZD', s:'DET', t:'in'},
+{c:'57', l:"Dettes d'exploitation",              u:'DZD', s:'DET', t:'calc', key:1},
+{c:'65', l:'Stocks de marchandises',           u:'DZD', s:'STK', t:'in'},
+{c:'66', l:'Stocks de matières premières',     u:'DZD', s:'STK', t:'in'},
+{c:'67', l:'Stocks autres approvisionnements', u:'DZD', s:'STK', t:'in'},
+{c:'68', l:"Stocks à l'extérieur",             u:'DZD', s:'STK', t:'in'},
+{c:'129',l:'Perte de valeur sur stock',        u:'DZD', s:'STK', t:'in'},
+{c:'64', l:'Stocks (brut)',                    u:'DZD', s:'STK', t:'calc', key:1},
+{c:'69', l:'Capacité chambres théorique',  u:'Nombre', s:'CAP', t:'in'},
+{c:'70', l:'Chambre HS',                   u:'Nombre', s:'CAP', t:'in'},
+{c:'71', l:'Chambre en modernisation',     u:'Nombre', s:'CAP', t:'in'},
+{c:'72', l:'Capacité chambres disponible', u:'Nombre', s:'CAP', t:'calc', key:1},
+{c:'73', l:'Nombre de chambres louées',    u:'Nombre', s:'CAP', t:'in'},
+{c:'75', l:'Capacité restaurant',          u:'Nombre', s:'CAP', t:'in'},
+{c:'76', l:'Nombre de couverts servis',    u:'Nombre', s:'CAP', t:'in'},
+{c:'78', l:'CA hébergement',    u:'DZD', s:'CAD', t:'in'},
+{c:'79', l:'CA restauration',   u:'DZD', s:'CAD', t:'in'},
+{c:'80', l:'CA boissons',       u:'DZD', s:'CAD', t:'in'},
+{c:'81', l:'CA soins',          u:'DZD', s:'CAD', t:'in'},
+{c:'82', l:'CA bains',          u:'DZD', s:'CAD', t:'in'},
+{c:'83', l:'CA catering',       u:'DZD', s:'CAD', t:'in'},
+{c:'84', l:'CA location locaux',u:'DZD', s:'CAD', t:'in'},
+{c:'85', l:'Autres CA',         u:'DZD', s:'CAD', t:'in'},
+{c:'86', l:"Chiffre d'affaires total", u:'DZD', s:'CAD', t:'calc', key:1},
+{c:'87', l:'Consommations hébergement', u:'DZD', s:'CON', t:'in'},
+{c:'88', l:'Consommations restauration',u:'DZD', s:'CON', t:'in'},
+{c:'89', l:'Consommations boissons',    u:'DZD', s:'CON', t:'in'},
+{c:'90', l:'Consommations soins',       u:'DZD', s:'CON', t:'in'},
+{c:'91', l:'Consommations bains',       u:'DZD', s:'CON', t:'in'},
+{c:'92', l:'Consommations catering',    u:'DZD', s:'CON', t:'in'},
+{c:'93', l:'Autres consommations',      u:'DZD', s:'CON', t:'in'},
+{c:'94', l:'Consommations globales',    u:'DZD', s:'CON', t:'calc', key:1},
+{c:'95', l:'Charges personnel hébergement',   u:'DZD', s:'CHP', t:'in'},
+{c:'96', l:'Charges personnel restauration',  u:'DZD', s:'CHP', t:'in'},
+{c:'97', l:'Charges personnel soins',         u:'DZD', s:'CHP', t:'in'},
+{c:'98', l:'Charges personnel administration',u:'DZD', s:'CHP', t:'in'},
+{c:'99', l:'Charges personnel soutien',       u:'DZD', s:'CHP', t:'in'},
+{c:'100',l:'Autres charges du personnel',     u:'DZD', s:'CHP', t:'in'},
+{c:'101',l:'Frais de personnel global',       u:'DZD', s:'CHP', t:'calc', key:1},
+{c:'103',l:'Surface totale', u:'M²', s:'DIV', t:'in'}
+];
+
+const S = (v,...codes)=> codes.reduce((a,c)=>a+v[c],0);
+const CALCLIST = [
+  ['06',  v=> S(v,'01','02','03','124','04','05')],
+  ['10',  v=> S(v,'06','07','08','09')],
+  ['13',  v=> S(v,'11','12','128')],
+  ['17',  v=> S(v,'13','14','15','16')],
+  ['18',  v=> v['10']-v['17']],
+  ['21',  v=> v['18']-v['19']-v['20']],
+  ['26',  v=> v['21']+v['22']-v['23']-v['24']+v['25']],
+  ['29',  v=> v['27']-v['28']],
+  ['30',  v=> v['26']+v['29']],
+  ['40',  v=> S(v,'31','32','33')],
+  ['46',  v=> v['44']+v['45']],
+  ['42',  v=> v['46']-v['43']],
+  ['41',  v=> v['42']+v['47']],
+  ['48',  v=> S(v,'49','50','51','52')],
+  ['57',  v=> S(v,'58','59','60','61','62','63')],
+  ['64',  v=> S(v,'65','66','67','68')],
+  ['72',  v=> v['69']-v['70']-v['71']],
+  ['86',  v=> S(v,'78','79','80','81','82','83','84','85')],
+  ['94',  v=> S(v,'87','88','89','90','91','92','93')],
+  ['101', v=> S(v,'95','96','97','98','99','100')]
+];
+
+/* ==========================================================================
+   4. ÉTAT & STOCKAGE
+   ========================================================================== */
+const KEY = 'gtt_droits_v1';
+let DB = { data:{}, units:null, users:null };
+let state = { period:curPeriod(), theme:'light', session:null };
+
+function curPeriod(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function prevPeriod(p){ const [y,m]=p.split('-').map(Number); const d=new Date(y,m-2,1); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+function nextPeriod(p){ const [y,m]=p.split('-').map(Number); const d=new Date(y,m,1); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); }
+
+function loadDB(){
+  try{
+    const s = localStorage.getItem(KEY);
+    if(s){
+      const p = JSON.parse(s);
+      DB = Object.assign({data:{}, units:null, users:null}, p);
+    }
+  }catch(e){}
+}
+function saveDB(){ try{ localStorage.setItem(KEY, JSON.stringify(DB)); }catch(e){ alert('Stockage saturé'); } }
+
+function syncUnits(){ UNITS = (DB.units && DB.units.length) ? DB.units : [...DEFAULT_UNITS]; }
+function syncUsers(){ USERS = (DB.users && DB.users.length) ? DB.users : [...DEFAULT_USERS]; }
+function unitById(id){ return UNITS.find(u=>u.id===id) || null; }
+function userById(id){ return USERS.find(u=>u.id===id) || null; }
+
+function getRaw(unit, period){ return (DB.data[period] && DB.data[period][unit]) || {}; }
+function setRaw(unit, period, code, val){
+  if(!DB.data[period]) DB.data[period]={};
+  if(!DB.data[period][unit]) DB.data[period][unit]={};
+  if(val===''||val===null||val===undefined) delete DB.data[period][unit][code];
+  else DB.data[period][unit][code]=num(val);
+}
+function values(unit, period){
+  const raw=getRaw(unit,period), v={};
+  IND.forEach(i=>{ if(i.t==='in') v[i.c]=num(raw[i.c]); });
+  CALCLIST.forEach(([c,fn])=>{ v[c]=fn(v); });
+  return v;
+}
+function consolidatedValues(period){
+  const vAll={}; IND.forEach(i=>vAll[i.c]=0);
+  UNITS.forEach(u=>{ const v=values(u.id,period); IND.forEach(i=>vAll[i.c]+=(v[i.c]||0)); });
+  CALCLIST.forEach(([c,fn])=>{ vAll[c]=fn(vAll); });
+  return vAll;
+}
+
+/* ==========================================================================
+   5. UTILITAIRES
+   ========================================================================== */
+const $ = s=>document.querySelector(s);
+const num = x=>{ const n=parseFloat(x); return isFinite(n)?n:0; };
+const esc = s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+const fmt = (x,d=0)=> (x===null||x===undefined||!isFinite(x))?'—':new Intl.NumberFormat('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d}).format(x);
+const DZD = x=> (x===null||!isFinite(x))?'—':fmt(x,0)+' DA';
+const MOIS=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+function periodLabel(p){ const [y,m]=p.split('-'); return MOIS[+m-1]+' '+y; }
+function hasData(unit, period){ return Object.keys(getRaw(unit,period)).length>0; }
+
+function toast(msg){
+  const el=$('#toast');
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>el.classList.remove('show'), 2600);
+}
+
+/* ==========================================================================
+   6. SESSION & PERMISSIONS
+   ========================================================================== */
+function getSession(){
+  try{
+    const s = sessionStorage.getItem('gtt_session');
+    return s ? JSON.parse(s) : null;
+  }catch(e){ return null; }
+}
+function setSession(user){
+  sessionStorage.setItem('gtt_session', JSON.stringify({
+    userId: user.id, login: user.login, nom: user.nom, role: user.role, unitId: user.unitId
+  }));
+  state.session = getSession();
+}
+function clearSession(){
+  sessionStorage.removeItem('gtt_session');
+  state.session = null;
+}
+
+function isAdmin(){ return state.session && state.session.role === 'admin'; }
+function isUnitUser(){ return state.session && state.session.role === 'unit'; }
+function canAccessUnit(unitId){
+  if(!state.session) return false;
+  if(isAdmin()) return true;
+  return state.session.unitId === unitId;
+}
+function canSeeConsolidated(){ return isAdmin(); }
+function canManageUsers(){ return isAdmin(); }
+function canManageSettings(){ return isAdmin(); }
+
+/* ==========================================================================
+   7. ÉCRAN DE CONNEXION
+   ========================================================================== */
+function showLogin(){
+  $('#loginScreen').style.display = 'flex';
+  $('#appRoot').style.display = 'none';
+  $('#loginUser').value = '';
+  $('#loginPwd').value = '';
+  $('#loginRole').value = 'auto';
+  $('#loginErr').style.display = 'none';
+  setTimeout(()=>$('#loginUser').focus(), 100);
+}
+function hideLogin(){
+  $('#loginScreen').style.display = 'none';
+  $('#appRoot').style.display = 'block';
+}
+function handleLogin(){
+  const login = $('#loginUser').value.trim().toLowerCase();
+  const pwd = $('#loginPwd').value;
+  const roleChoice = $('#loginRole').value;
+  const errEl = $('#loginErr');
+
+  if(!login || !pwd){
+    errEl.textContent = 'Veuillez remplir tous les champs';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  /* Recherche d'un utilisateur correspondant */
+  let candidates = USERS.filter(u => u.login.toLowerCase() === login && u.actif !== false);
+  if(roleChoice !== 'auto'){
+    candidates = candidates.filter(u => u.role === roleChoice);
+  }
+  const user = candidates.find(u => u.passwordHash === hashPwd(pwd));
+
+  if(!user){
+    errEl.textContent = '❌ Identifiant ou mot de passe incorrect';
+    errEl.style.display = 'block';
+    $('#loginPwd').value = '';
+    $('#loginPwd').focus();
+    return;
+  }
+
+  /* Session créée */
+  setSession(user);
+  updateUserBadge();
+  hideLogin();
+  renderGrid();
+  toast(`✅ Bienvenue ${user.nom}`);
+}
+
+function logout(){
+  if(!confirm('Voulez-vous vous déconnecter ?')) return;
+  clearSession();
+  closeModal();
+  showLogin();
+  toast('👋 Déconnexion réussie');
+}
+
+function updateUserBadge(){
+  const s = state.session;
+  if(!s) return;
+  const initials = (s.nom||'?').split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  $('#userAvatar').textContent = initials;
+  $('#userName').textContent = s.nom;
+  $('#userRole').textContent = s.role === 'admin' ? '👑 Administrateur' : ('🏨 ' + (unitById(s.unitId)?.nom || 'Unité'));
+}
+
+/* ==========================================================================
+   8. GRILLE DES FICHES
+   ========================================================================== */
+function renderGrid(){
+  const per = state.period;
+  const s = state.session;
+  if(!s) return;
+
+  if(isAdmin()){
+    $('#pageTitle').textContent = '👑 Espace Administrateur — Toutes les unités';
+    $('#periodLabel').textContent = 'Vous avez accès à toutes les unités et au consolidé — ' + periodLabel(per);
+  } else {
+    const u = unitById(s.unitId);
+    $('#pageTitle').textContent = `🏨 Espace ${u ? u.nom : 'Unité'}`;
+    $('#periodLabel').textContent = 'Vous ne pouvez accéder qu\'à votre unité — ' + periodLabel(per);
+  }
+
+  /* Cartes visibles selon le rôle */
+  let visibleUnits;
+  if(isAdmin()) visibleUnits = UNITS;
+  else visibleUnits = UNITS.filter(u => u.id === s.unitId);
+
+  const cardsHTML = visibleUnits.map(u=>{
+    const ok = hasData(u.id, per);
+    const status = ok ? '<span style="color:var(--good)">✔ saisie</span>' : '<span style="color:var(--muted)">— vide</span>';
+    return `<div class="unit-card" style="--uc:${u.couleur}" data-open="${u.id}">
+      <div class="sigle">${esc(u.sigle||u.id)}</div>
+      <div>
+        <div class="name">${esc(u.nom)}</div>
+        <div class="type">${esc(u.type)}</div>
+      </div>
+      <div class="footer">
+        <span>${status}</span>
+        <span class="open">✍️ Saisir →</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  /* Carte CONSOLIDÉ (admin uniquement) */
+  const consolidatedCard = isAdmin() ? `
+    <div class="unit-card consolidated" data-open="__consolidated">
+      <div class="sigle">🏢</div>
+      <div>
+        <div class="name">CONSOLIDÉ GROUPE</div>
+        <div class="type">Toutes les unités · ${UNITS.length} entités</div>
+      </div>
+      <div class="footer">
+        <span>👑 Réservé administrateur</span>
+        <span class="open">📊 Consulter →</span>
+      </div>
+    </div>` : '';
+
+  $('#unitGrid').innerHTML = consolidatedCard + cardsHTML;
+
+  /* Actions du haut selon rôle */
+  const acts = [];
+  acts.push(`<button class="btn sm" id="btnExport">⬇️ Exporter CSV</button>`);
+  if(isAdmin()){
+    acts.push(`<button class="btn sm" id="btnSaveJson">💾 Sauvegarde</button>`);
+    acts.push(`<button class="btn sm" id="btnImportJson">⬆️ Restaurer</button>`);
+    acts.push(`<button class="btn sm primary" id="btnUsers">👥 Utilisateurs</button>`);
+    acts.push(`<button class="btn sm" id="btnSettings">⚙️ Paramètres</button>`);
+  }
+  $('#topActions').innerHTML = acts.join('');
+
+  /* Écouteurs */
+  document.querySelectorAll('[data-open]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.open;
+      if(id === '__consolidated') openConsolidated();
+      else openUnit(id);
+    });
+  });
+  const btnE = $('#btnExport'); if(btnE) btnE.onclick = exportCSV;
+  const btnS = $('#btnSaveJson'); if(btnS) btnS.onclick = saveJSON;
+  const btnI = $('#btnImportJson'); if(btnI) btnI.onclick = restoreJSON;
+  const btnU = $('#btnUsers'); if(btnU) btnU.onclick = openUsersPanel;
+  const btnSet = $('#btnSettings'); if(btnSet) btnSet.onclick = openSettings;
+}
+
+/* ==========================================================================
+   9. OUVERTURE D'UNE UNITÉ
+   ========================================================================== */
+function openUnit(unitId){
+  if(!canAccessUnit(unitId)){
+    toast('⛔ Accès refusé — vous n\'avez pas les droits sur cette unité');
+    return;
+  }
+  const u = unitById(unitId);
+  if(!u){ toast('Unité introuvable'); return; }
+  showForm(unitId);
+}
+
+/* ==========================================================================
+   10. FORMULAIRE DE SAISIE
+   ========================================================================== */
+function showForm(unitId){
+  const u = unitById(unitId);
+  const per = state.period;
+  const v = values(unitId, per);
+  const readOnly = false; /* Un responsable d'unité peut modifier sa propre unité */
+
+  const sectionsHTML = SECTIONS.map(sec=>{
+    const items = IND.filter(i=>i.s===sec.id);
+    if(!items.length) return '';
+    const inputs = items.filter(i=>i.t==='in');
+    const calcs  = items.filter(i=>i.t==='calc');
+    if(!inputs.length && !calcs.length) return '';
+
+    const fieldsInputs = inputs.map(i=>{
+      const raw = getRaw(unitId, per)[i.c];
+      return `<div class="field">
+        <label><span class="code">${i.c}</span>${esc(i.l)} <em style="font-style:normal;color:var(--accent);font-size:10px">${i.u}</em></label>
+        <input type="number" step="any" inputmode="decimal" data-code="${i.c}" value="${raw!==undefined?raw:''}" placeholder="0" ${readOnly?'disabled':''}>
+      </div>`;
+    }).join('');
+
+    const fieldsCalcs = calcs.map(i=>`
+      <div class="field calc">
+        <label><span class="code">${i.c}</span>${esc(i.l)} <em style="font-style:normal;color:var(--accent);font-size:10px">${i.u}</em></label>
+        <input type="text" readonly data-recap="${i.c}" value="${fmt(v[i.c],0)}">
+      </div>`).join('');
+
+    return `<div class="sec">
+      <h3>${esc(sec.nom)} <span class="n">${items.length}</span></h3>
+      <div class="grid-fields">${fieldsInputs}${fieldsCalcs}</div>
+    </div>`;
+  }).join('');
+
+  $('#modalRoot').innerHTML = `
+    <div class="modal-overlay" data-overlay>
+      <div class="modal">
+        <div class="modal-head" style="--uc:${u.couleur}">
+          <div class="mh-title">
+            <div class="mh-dot" style="background:${u.couleur}">${esc(u.sigle||u.id)}</div>
+            <div>
+              <h2>${esc(u.nom)}</h2>
+              <p>${esc(u.type)} · Saisie des indicateurs · ${periodLabel(per)}</p>
+            </div>
+          </div>
+          <div class="mh-actions">
+            <button class="ctrl-btn icon" data-prev-month title="Mois précédent">‹</button>
+            <button class="ctrl-btn icon" data-next-month title="Mois suivant">›</button>
+            <button class="mh-close" data-close-modal>×</button>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <div class="info-banner">
+            📅 <b>${periodLabel(per)}</b> · Les champs bleus sont calculés automatiquement · 💾 Sauvegarde automatique
+          </div>
+          ${sectionsHTML}
+        </div>
+
+        <div class="modal-foot">
+          <div class="btn-row">
+            <button class="btn" data-copy-report>📋 Copier le rapport</button>
+            <button class="btn" data-print-report>🖨️ Imprimer</button>
+            <button class="btn danger" data-clear-period>🗑️ Vider ce mois</button>
+          </div>
+          <button class="btn primary" data-close-modal>✓ Terminer</button>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.style.overflow = 'hidden';
+
+  document.querySelectorAll('input[data-code]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      setRaw(unitId, per, inp.dataset.code, inp.value);
+      saveDB();
+      refreshCalculs(unitId, per);
+    });
+  });
+  document.querySelectorAll('[data-prev-month]').forEach(b=> b.onclick = ()=> shiftMonth(unitId, -1));
+  document.querySelectorAll('[data-next-month]').forEach(b=> b.onclick = ()=> shiftMonth(unitId, +1));
+  document.querySelectorAll('[data-copy-report]').forEach(b=> b.onclick = ()=> copyReport(unitId, per));
+  document.querySelectorAll('[data-print-report]').forEach(b=> b.onclick = ()=> window.print());
+  document.querySelectorAll('[data-clear-period]').forEach(b=> b.onclick = ()=>{
+    if(!confirm(`Effacer toutes les données de ${periodLabel(per)} pour « ${u.nom} » ?`)) return;
+    if(DB.data[per]) delete DB.data[per][unitId];
+    saveDB(); toast('Données effacées'); showForm(unitId);
+  });
+}
+function shiftMonth(unitId, dir){
+  state.period = dir>0 ? nextPeriod(state.period) : prevPeriod(state.period);
+  $('#periodSel').value = state.period;
+  showForm(unitId);
+}
+function refreshCalculs(unitId, per){
+  const v = values(unitId, per);
+  document.querySelectorAll('[data-recap]').forEach(el=>{
+    el.value = fmt(v[el.dataset.recap], 0);
+  });
+}
+
+/* ==========================================================================
+   11. VUE CONSOLIDÉE
+   ========================================================================== */
+function openConsolidated(){
+  if(!canSeeConsolidated()){
+    toast('⛔ Accès réservé à l\'administrateur');
+    return;
+  }
+  showConsolidated();
+}
+
+function showConsolidated(){
+  const per = state.period;
+  const vAll = consolidatedValues(per);
+
+  const kpiHTML = `
+    <div class="kpis-mini">
+      <div class="kpi-mini"><div class="l">Chiffre d'affaires</div><div class="v">${DZD(vAll['06'])}</div></div>
+      <div class="kpi-mini"><div class="l">Valeur ajoutée</div><div class="v">${DZD(vAll['18'])}</div></div>
+      <div class="kpi-mini"><div class="l">EBE</div><div class="v" style="color:${vAll['21']>=0?'var(--good)':'var(--bad)'}">${DZD(vAll['21'])}</div></div>
+      <div class="kpi-mini"><div class="l">Résultat ordinaire</div><div class="v" style="color:${vAll['30']>=0?'var(--good)':'var(--bad)'}">${DZD(vAll['30'])}</div></div>
+      <div class="kpi-mini"><div class="l">Effectif total</div><div class="v">${fmt(vAll['40'],0)}</div></div>
+      <div class="kpi-mini"><div class="l">Trésorerie nette</div><div class="v" style="color:${vAll['42']>=0?'var(--good)':'var(--bad)'}">${DZD(vAll['42'])}</div></div>
+    </div>`;
+
+  let detailRows = '';
+  SECTIONS.forEach(sec=>{
+    const items = IND.filter(i=>i.s===sec.id);
+    if(!items.length) return;
+    detailRows += `<tr class="sec-row"><td colspan="2">${esc(sec.nom)}</td></tr>`;
+    items.forEach(i=>{
+      const val = vAll[i.c];
+      const cls = i.t==='calc' ? 'calc' : '';
+      const key = i.key ? 'key' : '';
+      const disp = i.u==='DZD' ? fmt(val,0)+' DA' : fmt(val,0);
+      detailRows += `<tr class="${cls} ${key}">
+        <td><span class="code">${i.c}</span>${esc(i.l)}<em class="u">${i.u}</em></td>
+        <td class="n">${disp}</td>
+      </tr>`;
+    });
+  });
+
+  let unitRows = '';
+  UNITS.forEach(u=>{
+    const v = values(u.id, per);
+    unitRows += `<tr class="clickable" data-jump="${u.id}">
+      <td><span style="display:inline-block;width:9px;height:9px;border-radius:3px;background:${u.couleur};margin-right:8px"></span>${esc(u.nom)}</td>
+      <td style="color:var(--muted);font-size:12px">${esc(u.type)}</td>
+      <td class="n">${DZD(v['06'])}</td>
+      <td class="n">${DZD(v['18'])}</td>
+      <td class="n" style="color:${v['21']>=0?'var(--good)':'var(--bad)'}">${DZD(v['21'])}</td>
+      <td class="n" style="color:${v['30']>=0?'var(--good)':'var(--bad)'}">${DZD(v['30'])}</td>
+      <td class="n">${fmt(v['40'],0)}</td>
+      <td class="n">${DZD(v['42'])}</td>
+    </tr>`;
+  });
+
+  const totalRow = `<tr>
+    <td colspan="2"><b>TOTAL GROUPE</b></td>
+    <td class="n">${DZD(vAll['06'])}</td>
+    <td class="n">${DZD(vAll['18'])}</td>
+    <td class="n" style="color:${vAll['21']>=0?'var(--good)':'var(--bad)'}">${DZD(vAll['21'])}</td>
+    <td class="n" style="color:${vAll['30']>=0?'var(--good)':'var(--bad)'}">${DZD(vAll['30'])}</td>
+    <td class="n">${fmt(vAll['40'],0)}</td>
+    <td class="n">${DZD(vAll['42'])}</td>
+  </tr>`;
+
+  $('#modalRoot').innerHTML = `
+    <div class="modal-overlay" data-overlay>
+      <div class="modal wide">
+        <div class="modal-head" style="--uc:#0d6efd">
+          <div class="mh-title">
+            <div class="mh-dot" style="background:#0d6efd">🏢</div>
+            <div>
+              <h2>CONSOLIDÉ — GROUPE TOURISTIQUE TLEMCEN</h2>
+              <p>${UNITS.length} entités · ${periodLabel(per)}</p>
+            </div>
+          </div>
+          <div class="mh-actions">
+            <button class="ctrl-btn icon" data-prev-month>‹</button>
+            <button class="ctrl-btn icon" data-next-month>›</button>
+            <button class="mh-close" data-close-modal>×</button>
+          </div>
+        </div>
+
+        <div class="modal-body">
+          <div class="info-banner">📅 <b>${periodLabel(per)}</b> · Consolidation de toutes les unités du groupe.</div>
+          ${kpiHTML}
+
+          <div class="sec">
+            <h3>🏨 Synthèse par unité</h3>
+            <div style="overflow-x:auto">
+              <table class="data">
+                <thead><tr>
+                  <th>Unité</th><th>Type</th>
+                  <th class="n">CA</th><th class="n">VA</th>
+                  <th class="n">EBE</th><th class="n">Résultat</th>
+                  <th class="n">Effectif</th><th class="n">Trésorerie</th>
+                </tr></thead>
+                <tbody>${unitRows}</tbody>
+                <tfoot>${totalRow}</tfoot>
+              </table>
+            </div>
+          </div>
+
+          <div class="sec">
+            <h3>📊 Détail complet des indicateurs consolidés</h3>
+            <div style="overflow-x:auto">
+              <table class="data">
+                <thead><tr><th>Indicateur</th><th class="n">Total groupe</th></tr></thead>
+                <tbody>${detailRows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <div class="btn-row">
+            <button class="btn" id="btnConsolCopy">📋 Copier le rapport</button>
+            <button class="btn" id="btnConsolPrint">🖨️ Imprimer</button>
+          </div>
+          <button class="btn primary" data-close-modal>✓ Fermer</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.style.overflow = 'hidden';
+
+  document.querySelectorAll('[data-prev-month]').forEach(b=> b.onclick = ()=>{
+    state.period = prevPeriod(state.period); $('#periodSel').value = state.period; showConsolidated();
+  });
+  document.querySelectorAll('[data-next-month]').forEach(b=> b.onclick = ()=>{
+    state.period = nextPeriod(state.period); $('#periodSel').value = state.period; showConsolidated();
+  });
+  $('#btnConsolCopy').onclick = ()=> copyConsolidated(per);
+  $('#btnConsolPrint').onclick = ()=> window.print();
+  document.querySelectorAll('[data-jump]').forEach(tr=>{
+    tr.onclick = ()=>{ closeModal(); setTimeout(()=> openUnit(tr.dataset.jump), 100); };
+  });
+}
+
+function copyConsolidated(per){
+  const vAll = consolidatedValues(per);
+  const L = [];
+  L.push(`📊 *RAPPORT CONSOLIDÉ — ${periodLabel(per).toUpperCase()}*`);
+  L.push(`🏢 *GROUPE TOURISTIQUE TLEMCEN*`);
+  L.push(`Unités : ${UNITS.length} entités`);
+  L.push('');
+  L.push(`━━━ 💰 RÉSULTATS CONSOLIDÉS ━━━`);
+  L.push(`• Chiffre d'affaires : ${DZD(vAll['06'])}`);
+  L.push(`• Valeur ajoutée : ${DZD(vAll['18'])}`);
+  L.push(`• Charges du personnel : ${DZD(vAll['19'])}`);
+  L.push(`• EBE : ${DZD(vAll['21'])}`);
+  L.push(`• Résultat opérationnel : ${DZD(vAll['26'])}`);
+  L.push(`• Résultat ordinaire : ${DZD(vAll['30'])}`);
+  L.push('');
+  L.push(`━━━ 🏨 ACTIVITÉ ━━━`);
+  L.push(`• Effectif total : ${fmt(vAll['40'],0)}`);
+  L.push(`• Capacité chambres : ${fmt(vAll['72'],0)}`);
+  L.push(`• Chambres louées : ${fmt(vAll['73'],0)}`);
+  L.push('');
+  L.push(`━━━ 💵 TRÉSORERIE & BILAN ━━━`);
+  L.push(`• Trésorerie nette : ${DZD(vAll['42'])}`);
+  L.push(`• Créances clients : ${DZD(vAll['48'])}`);
+  L.push(`• Dettes d'exploitation : ${DZD(vAll['57'])}`);
+  L.push('');
+  L.push(`━━━ 🏢 DÉTAIL PAR UNITÉ ━━━`);
+  UNITS.forEach(u=>{
+    const v = values(u.id, per);
+    L.push(`• ${u.nom} : CA ${DZD(v['06'])} · EBE ${DZD(v['21'])} · Effectif ${fmt(v['40'],0)}`);
+  });
+  L.push('');
+  L.push(`_Généré le ${new Date().toLocaleDateString('fr-FR')} — Groupe Touristique Tlemcen_`);
+  const txt = L.join('\n');
+  navigator.clipboard.writeText(txt).then(()=>toast('Rapport consolidé copié')).catch(()=>{
+    const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove(); toast('Rapport copié');
+  });
+}
+
+/* ==========================================================================
+   12. RAPPORT TEXTE UNITE
+   ========================================================================== */
+function buildReport(unitId, per){
+  const u = unitById(unitId);
+  const v = values(unitId, per);
+  const L = [];
+  L.push(`📊 *RAPPORT MENSUEL — ${periodLabel(per).toUpperCase()}*`);
+  L.push(`🏢 *${u.nom}*`);
+  L.push(`Type : ${u.type}`);
+  L.push('');
+  SECTIONS.forEach(sec=>{
+    const items = IND.filter(i=>i.s===sec.id);
+    if(!items.length) return;
+    const nonZero = items.filter(i=>v[i.c] && v[i.c]!==0);
+    if(!nonZero.length) return;
+    L.push(`━━━ ${sec.nom.toUpperCase()} ━━━`);
+    nonZero.forEach(i=>{
+      const val = v[i.c];
+      const disp = i.u==='DZD' ? fmt(val,0)+' DA' : fmt(val,0);
+      L.push(`• ${i.l} : ${disp}`);
+    });
+    L.push('');
+  });
+  L.push(`_Généré le ${new Date().toLocaleDateString('fr-FR')} — Groupe Touristique Tlemcen_`);
+  return L.join('\n');
+}
+function copyReport(unitId, per){
+  const txt = buildReport(unitId, per);
+  navigator.clipboard.writeText(txt).then(()=>toast('Rapport copié')).catch(()=>{
+    const ta = document.createElement('textarea'); ta.value = txt; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); ta.remove(); toast('Rapport copié');
+  });
+}
+
+/* ==========================================================================
+   13. PANNEAU UTILISATEURS (admin)
+   ========================================================================== */
+function openUsersPanel(){
+  if(!canManageUsers()){ toast('⛔ Réservé à l\'administrateur'); return; }
+
+  const rows = USERS.map(u=>{
+    const roleBadge = u.role === 'admin'
+      ? '<span class="role-badge role-admin">👑 Admin</span>'
+      : '<span class="role-badge role-unit">🏨 Unité</span>';
+    const unitName = u.unitId ? (unitById(u.unitId)?.nom || u.unitId) : '—';
+    const statusBadge = u.actif === false
+      ? '<span class="role-badge role-inactive">🚫 Inactif</span>'
+      : '<span class="role-badge" style="background:rgba(22,163,74,.15);color:var(--good)">✅ Actif</span>';
+
+    return `<tr data-user-row="${u.id}">
+      <td><b>${esc(u.login)}</b></td>
+      <td>${esc(u.nom)}</td>
+      <td>${roleBadge}</td>
+      <td>${u.unitId ? esc(unitName) : '—'}</td>
+      <td>${statusBadge}</td>
+      <td style="white-space:nowrap;text-align:right">
+        <button class="btn sm" data-edit-user="${u.id}" title="Modifier">✏️</button>
+        <button class="btn sm" data-toggle-user="${u.id}" title="${u.actif===false?'Activer':'Désactiver'}">${u.actif===false?'▶️':'⏸️'}</button>
+        <button class="btn sm danger" data-del-user="${u.id}" title="Supprimer">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  $('#modalRoot').innerHTML = `
+    <div class="modal-overlay" data-overlay>
+      <div class="modal wide">
+        <div class="modal-head">
+          <div class="mh-title">
+            <div class="mh-dot">👥</div>
+            <div>
+              <h2>Gestion des utilisateurs</h2>
+              <p>Créer, modifier et gérer les droits d'accès</p>
+            </div>
+          </div>
+          <button class="mh-close" data-close-modal>×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="info-banner">
+            💡 <b>Rôles :</b> <b>👑 Administrateur</b> — accès total (toutes les unités + consolidé + gestion).
+            <b>🏨 Responsable d'unité</b> — accès limité à sa propre unité uniquement.
+          </div>
+
+          <div class="btn-row" style="margin-bottom:14px">
+            <button class="btn primary" id="btnAddUser">➕ Nouvel utilisateur</button>
+          </div>
+
+          <div style="overflow-x:auto">
+            <table class="data">
+              <thead>
+                <tr>
+                  <th>Identifiant</th><th>Nom complet</th>
+                  <th>Rôle</th><th>Unité associée</th>
+                  <th>Statut</th><th></th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+
+          <div class="info-banner" style="margin-top:16px">
+            🔐 <b>Note :</b> les mots de passe sont hachés et non lisibles. Cliquez sur ✏️ pour modifier un utilisateur
+            (y compris son mot de passe), ⏸️ pour désactiver sans supprimer, 🗑️ pour supprimer.
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <div style="font-size:12px;color:var(--muted)">${USERS.length} utilisateur(s)</div>
+          <button class="btn primary" data-close-modal>Fermer</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.style.overflow = 'hidden';
+
+  $('#btnAddUser').onclick = ()=> openUserEditor(null);
+  document.querySelectorAll('[data-edit-user]').forEach(b=> b.onclick = ()=> openUserEditor(b.dataset.editUser));
+  document.querySelectorAll('[data-del-user]').forEach(b=> b.onclick = ()=> deleteUser(b.dataset.delUser));
+  document.querySelectorAll('[data-toggle-user]').forEach(b=> b.onclick = ()=> toggleUser(b.dataset.toggleUser));
+}
+
+function openUserEditor(userId){
+  const isNew = !userId;
+  const u = isNew
+    ? {id:'u-'+Date.now(), login:'', nom:'', role:'unit', unitId:UNITS[0]?.id, actif:true, passwordHash:''}
+    : JSON.parse(JSON.stringify(userById(userId) || {}));
+  if(!u) return;
+
+  const unitOptions = UNITS.map(x=>`<option value="${x.id}" ${x.id===u.unitId?'selected':''}>${esc(x.nom)}</option>`).join('');
+
+  $('#modalRoot').innerHTML = `
+    <div class="modal-overlay" data-overlay>
+      <div class="modal" style="max-width:520px">
+        <div class="modal-head">
+          <div class="mh-title">
+            <div class="mh-dot">${isNew?'➕':'✏️'}</div>
+            <div>
+              <h2>${isNew?'Nouvel utilisateur':'Modifier l\'utilisateur'}</h2>
+              <p>${isNew?'Créer un compte d\'accès':'Modifier les droits et identifiants'}</p>
+            </div>
+          </div>
+          <button class="mh-close" data-close-modal>×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="field" style="margin-bottom:12px">
+            <label style="font-size:12px;color:var(--muted);font-weight:700">Identifiant de connexion *</label>
+            <input type="text" id="eu-login" value="${esc(u.login)}" placeholder="ex. hb, admin…"
+              style="background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;outline:none">
+          </div>
+
+          <div class="field" style="margin-bottom:12px">
+            <label style="font-size:12px;color:var(--muted);font-weight:700">Nom complet *</label>
+            <input type="text" id="eu-nom" value="${esc(u.nom)}" placeholder="ex. Ahmed BENALI"
+              style="background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;outline:none">
+          </div>
+
+          <div class="field" style="margin-bottom:12px">
+            <label style="font-size:12px;color:var(--muted);font-weight:700">Rôle *</label>
+            <select id="eu-role" style="background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;outline:none">
+              <option value="unit" ${u.role==='unit'?'selected':''}>🏨 Responsable d'unité</option>
+              <option value="admin" ${u.role==='admin'?'selected':''}>👑 Administrateur</option>
+            </select>
+          </div>
+
+          <div class="field" id="eu-unit-wrap" style="margin-bottom:12px">
+            <label style="font-size:12px;color:var(--muted);font-weight:700">Unité associée</label>
+            <select id="eu-unit" style="background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;outline:none">
+              ${unitOptions}
+            </select>
+          </div>
+
+          <div class="field" style="margin-bottom:12px">
+            <label style="font-size:12px;color:var(--muted);font-weight:700">Mot de passe ${isNew?'*':'(laisser vide = inchangé)'}</label>
+            <input type="password" id="eu-pwd" placeholder="••••••" autocomplete="new-password"
+              style="background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;outline:none">
+          </div>
+
+          <div class="field">
+            <label style="font-size:12px;color:var(--muted);font-weight:700">Statut du compte</label>
+            <select id="eu-actif" style="background:var(--bg);border:1px solid var(--line);color:var(--text);padding:10px 12px;border-radius:9px;font-size:13px;outline:none">
+              <option value="1" ${u.actif!==false?'selected':''}>✅ Actif</option>
+              <option value="0" ${u.actif===false?'selected':''}>🚫 Inactif (bloqué)</option>
+            </select>
+          </div>
+
+          <div id="eu-error" style="color:var(--bad);font-size:12.5px;font-weight:700;margin-top:10px;min-height:18px"></div>
+        </div>
+
+        <div class="modal-foot">
+          <div class="btn-row">
+            ${!isNew?`<button class="btn danger" id="eu-delete">🗑️ Supprimer</button>`:''}
+          </div>
+          <div class="btn-row">
+            <button class="btn" data-close-modal>Annuler</button>
+            <button class="btn primary" id="eu-save">💾 ${isNew?'Créer':'Enregistrer'}</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  document.body.style.overflow='hidden';
+
+  const roleSel = $('#eu-role');
+  const unitWrap = $('#eu-unit-wrap');
+  const toggleUnit = ()=>{ unitWrap.style.display = roleSel.value==='admin' ? 'none' : 'block'; };
+  roleSel.onchange = toggleUnit;
+  toggleUnit();
+
+  $('#eu-save').onclick = ()=>{
+    const login = $('#eu-login').value.trim().toLowerCase();
+    const nom = $('#eu-nom').value.trim();
+    const role = roleSel.value;
+    const unitId = role === 'admin' ? null : $('#eu-unit').value;
+    const pwd = $('#eu-pwd').value;
+    const actif = $('#eu-actif').value === '1';
+    const err = $('#eu-error');
+
+    if(!login || !nom){ err.textContent = '⚠️ Identifiant et nom obligatoires'; return; }
+    if(!/^[a-z0-9_-]+$/.test(login)){ err.textContent = '⚠️ Identifiant : lettres minuscules, chiffres, _ ou - uniquement'; return; }
+
+    /* Unicité du login */
+    const dup = USERS.find(x => x.id !== u.id && x.login.toLowerCase() === login);
+    if(dup){ err.textContent = '⚠️ Cet identifiant est déjà utilisé'; return; }
+
+    /* Mot de passe : requis si nouveau ou si vide pour un compte existant avec role changé */
+    if(isNew && !pwd){ err.textContent = '⚠️ Mot de passe obligatoire pour un nouveau compte'; return; }
+    if(pwd && pwd.length < 4){ err.textContent = '⚠️ Mot de passe : 4 caractères minimum'; return; }
+
+    /* Unicité unité pour les non-admin */
+    if(role === 'unit'){
+      const dupUnit = USERS.find(x => x.id !== u.id && x.role === 'unit' && x.unitId === unitId && x.actif !== false);
+      if(dupUnit){ err.textContent = '⚠️ Cette unité a déjà un responsable actif'; return; }
+    }
+
+    /* Empêcher de supprimer le dernier admin */
+    if(!isNew && u.role === 'admin' && (role !== 'admin' || actif === false)){
+      const autresAdmins = USERS.filter(x => x.id !== u.id && x.role === 'admin' && x.actif !== false);
+      if(!autresAdmins.length){ err.textContent = '⚠️ Impossible : ce compte est le dernier administrateur actif'; return; }
+    }
+
+    /* Sauvegarde */
+    const saved = {
+      id: u.id,
+      login,
+      nom,
+      role,
+      unitId,
+      actif,
+      passwordHash: pwd ? hashPwd(pwd) : (u.passwordHash || '')
+    };
+
+    if(!DB.users) DB.users = USERS.map(x=>({...x}));
+    const idx = DB.users.findIndex(x=>x.id === u.id);
+    if(idx >= 0) DB.users[idx] = saved;
+    else DB.users.push(saved);
+
+    saveDB(); syncUsers();
+    /* Si l'utilisateur courant a été modifié, on garde la session mais on la met à jour */
+    const session = getSession();
+    if(session && session.userId === saved.id){
+      setSession(saved);
+      updateUserBadge();
+    }
+    toast(isNew ? '✅ Utilisateur créé' : '✅ Utilisateur modifié');
+    openUsersPanel();
+    renderGrid();
+  };
+
+  if(!isNew){
+    $('#eu-delete').onclick = ()=>{
+      if(!confirm(`Supprimer définitivement « ${u.nom} » (${u.login}) ?`)) return;
+      deleteUser(u.id);
+    };
+  }
+}
+
+function deleteUser(userId){
+  const u = userById(userId);
+  if(!u) return;
+
+  /* Garde-fous */
+  if(u.role === 'admin'){
+    const autresAdmins = USERS.filter(x => x.id !== userId && x.role === 'admin' && x.actif !== false);
+    if(!autresAdmins.length){ alert('⚠️ Impossible : c\'est le dernier administrateur actif'); return; }
+  }
+  const session = getSession();
+  if(session && session.userId === userId){
+    alert('⚠️ Impossible de supprimer le compte avec lequel vous êtes connecté');
+    return;
+  }
+
+  if(!DB.users) DB.users = USERS.map(x=>({...x}));
+  DB.users = DB.users.filter(x => x.id !== userId);
+  saveDB(); syncUsers();
+  toast('🗑️ Utilisateur supprimé');
+  openUsersPanel();
+  renderGrid();
+}
+function toggleUser(userId){
+  const u = userById(userId);
+  if(!u) return;
+  if(u.role === 'admin' && u.actif !== false){
+    const autresAdmins = USERS.filter(x => x.id !== userId && x.role === 'admin' && x.actif !== false);
+    if(!autresAdmins.length){ alert('⚠️ Impossible : c\'est le dernier administrateur actif'); return; }
+  }
+  if(!DB.users) DB.users = USERS.map(x=>({...x}));
+  const idx = DB.users.findIndex(x=>x.id === userId);
+  if(idx < 0) return;
+  DB.users[idx].actif = !(DB.users[idx].actif !== false);
+  saveDB(); syncUsers();
+  toast(DB.users[idx].actif ? '▶️ Compte activé' : '⏸️ Compte désactivé');
+  openUsersPanel();
+}
+
+/* ==========================================================================
+   14. PARAMÈTRES (admin)
+   ========================================================================== */
+function openSettings(){
+  if(!canManageSettings()){ toast('⛔ Réservé à l\'administrateur'); return; }
+
+  const unitsRows = UNITS.map(u=>`
+    <tr>
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:3px;background:${u.couleur};margin-right:8px"></span><b>${esc(u.nom)}</b></td>
+      <td style="color:var(--muted);font-size:12px">${esc(u.type)}</td>
+      <td style="text-align:center"><code style="background:var(--bg);padding:3px 8px;border-radius:5px;font-weight:800">${esc(u.id)}</code></td>
+      <td>
+        <input type="color" value="${esc(u.couleur)}" data-unit-color="${u.id}"
+          style="width:44px;height:30px;border:1px solid var(--line);border-radius:6px;cursor:pointer;background:var(--card)">
+      </td>
+    </tr>`).join('');
+
+  $('#modalRoot').innerHTML = `
+    <div class="modal-overlay" data-overlay>
+      <div class="modal wide">
+        <div class="modal-head">
+          <div class="mh-title">
+            <div class="mh-dot">⚙️</div>
+            <div>
+              <h2>Paramètres généraux</h2>
+              <p>Unités · Personnalisation · Sauvegarde</p>
+            </div>
+          </div>
+          <button class="mh-close" data-close-modal>×</button>
+        </div>
+
+        <div class="modal-body">
+          <div class="info-banner">
+            👑 Vous êtes connecté en tant qu'<b>Administrateur</b>. Vous pouvez personnaliser les couleurs,
+            gérer les utilisateurs (onglet Utilisateurs) et effectuer des sauvegardes.
+          </div>
+
+          <h3 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin-bottom:10px">
+            🏨 Unités du groupe
+          </h3>
+          <div style="overflow-x:auto">
+            <table class="data">
+              <thead>
+                <tr><th>Nom</th><th>Type</th><th style="text-align:center">Code</th><th>Couleur</th></tr>
+              </thead>
+              <tbody>${unitsRows}</tbody>
+            </table>
+          </div>
+
+          <h3 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin:22px 0 10px">
+            📅 Périodes saisies
+          </h3>
+          ${renderPeriodsList()}
+
+          <h3 style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin:22px 0 10px">
+            💾 Sauvegarde & restauration
+          </h3>
+          <div class="btn-row">
+            <button class="btn primary" id="set-save-json">⬇️ Sauvegarde JSON complète</button>
+            <button class="btn" id="set-restore-json">⬆️ Restaurer une sauvegarde</button>
+            <button class="btn" id="set-export-csv">📊 Export CSV</button>
+            <button class="btn danger" id="set-reset">⚠️ Réinitialiser toutes les données</button>
+          </div>
+        </div>
+
+        <div class="modal-foot">
+          <div style="font-size:11.5px;color:var(--muted)">Les changements de couleur sont enregistrés immédiatement.</div>
+          <button class="btn primary" data-close-modal>Fermer</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.style.overflow='hidden';
+
+  /* Couleurs */
+  document.querySelectorAll('[data-unit-color]').forEach(inp=>{
+    inp.onchange = ()=>{
+      if(!DB.units) DB.units = UNITS.map(u=>({...u}));
+      const idx = DB.units.findIndex(x=>x.id === inp.dataset.unitColor);
+      if(idx < 0) return;
+      DB.units[idx].couleur = inp.value;
+      saveDB(); syncUnits(); renderGrid();
+      toast('Couleur mise à jour');
+    };
+  });
+  $('#set-save-json').onclick = saveJSON;
+  $('#set-restore-json').onclick = restoreJSON;
+  $('#set-export-csv').onclick = exportCSV;
+  $('#set-reset').onclick = resetAll;
+}
+function renderPeriodsList(){
+  const ps = Object.keys(DB.data || {}).sort().reverse();
+  if(!ps.length) return '<div style="color:var(--muted);font-size:13px">Aucune période saisie pour le moment.</div>';
+  return '<div class="btn-row">' + ps.map(p=>`<span class="pwd-chip" style="cursor:pointer" onclick="gotoPeriod('${p}')">📅 ${periodLabel(p)}</span>`).join('') + '</div>';
+}
+function gotoPeriod(p){ state.period = p; $('#periodSel').value = p; closeModal(); renderGrid(); }
+
+/* ==========================================================================
+   15. IMPORT / EXPORT
+   ========================================================================== */
+function download(name, content, type='text/plain;charset=utf-8'){
+  const blob = new Blob(['\ufeff'+content], {type});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 300);
+}
+function exportCSV(){
+  if(!state.session) return;
+  const per = state.period;
+  const lines = ['Unité;Code;Indicateur;Unité;Valeur'];
+  const unitsToExport = isAdmin() ? UNITS : UNITS.filter(u=>u.id === state.session.unitId);
+  unitsToExport.forEach(u=>{
+    const v = values(u.id, per);
+    IND.forEach(i=>{
+      const val = v[i.c];
+      if(val) lines.push(`${u.nom};${i.c};${i.l};${i.u};${String(val).replace('.',',')}`);
+    });
+  });
+  download(`indicateurs_${per}.csv`, lines.join('\n'), 'text/csv;charset=utf-8');
+  toast('Export CSV téléchargé');
+}
+function saveJSON(){
+  download(`sauvegarde_gtt_${new Date().toISOString().slice(0,10)}.json`, JSON.stringify(DB, null, 2), 'application/json');
+  toast('Sauvegarde téléchargée');
+}
+function restoreJSON(){
+  const inp = document.createElement('input');
+  inp.type='file'; inp.accept='.json';
+  inp.onchange = e => {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = ()=>{
+      try{
+        DB = JSON.parse(r.result);
+        syncUnits(); syncUsers(); saveDB(); renderGrid();
+        toast('Sauvegarde restaurée');
+      }catch(err){ alert('Fichier invalide'); }
+    };
+    r.readAsText(f);
+  };
+  inp.click();
+}
+function resetAll(){
+  if(!confirm('⚠️ Effacer TOUTES les données (unités, utilisateurs, saisies) ? Action irréversible.')) return;
+  if(!confirm('Confirmez-vous définitivement ?')) return;
+  DB = { data:{}, units:null, users:null };
+  saveDB(); syncUnits(); syncUsers();
+  clearSession();
+  closeModal();
+  showLogin();
+  toast('Données réinitialisées');
+}
+
+/* ==========================================================================
+   16. FERMETURE MODALE
+   ========================================================================== */
+function closeModal(){
+  $('#modalRoot').innerHTML='';
+  document.body.style.overflow='';
+}
+document.addEventListener('click', e=>{
+  if(e.target.closest('[data-close-modal]')){ closeModal(); if(state.session) renderGrid(); return; }
+  if(e.target.classList.contains('modal-overlay')){ closeModal(); if(state.session) renderGrid(); return; }
+});
+document.addEventListener('keydown', e=>{
+  if(e.key==='Escape'){ closeModal(); if(state.session) renderGrid(); }
+});
+
+/* ==========================================================================
+   17. INITIALISATION
+   ========================================================================== */
+function init(){
+  loadDB();
+  syncUnits();
+  syncUsers();
+
+  /* Thème */
+  const savedTheme = localStorage.getItem('gtt_theme');
+  if(savedTheme === 'dark'){
+    state.theme = 'dark';
+    document.documentElement.setAttribute('data-theme','dark');
+    $('#themeBtn').textContent = '☀️';
+  }
+  $('#themeBtn').onclick = ()=>{
+    state.theme = state.theme==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme', state.theme==='dark'?'dark':'');
+    localStorage.setItem('gtt_theme', state.theme);
+    $('#themeBtn').textContent = state.theme==='dark'?'☀️':'🌙';
+  };
+
+  /* Période */
+  $('#periodSel').value = state.period;
+  $('#periodSel').onchange = e=>{ state.period = e.target.value; renderGrid(); };
+
+  /* Déconnexion */
+  $('#logoutBtn').onclick = logout;
+
+  /* Connexion */
+  $('#loginBtn').onclick = handleLogin;
+  $('#loginUser').addEventListener('keydown', e=>{ if(e.key==='Enter') $('#loginPwd').focus(); });
+  $('#loginPwd').addEventListener('keydown', e=>{ if(e.key==='Enter') handleLogin(); });
+
+  /* Session existante ? */
+  const existing = getSession();
+  if(existing && USERS.some(u => u.id === existing.userId && u.actif !== false)){
+    state.session = existing;
+    /* Rafraîchir les données de session */
+    const u = userById(existing.userId);
+    if(u) setSession(u);
+    updateUserBadge();
+    hideLogin();
+    renderGrid();
+  } else {
+    clearSession();
+    showLogin();
+  }
+}
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
